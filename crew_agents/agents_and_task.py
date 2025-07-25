@@ -14,7 +14,7 @@ litellm.set_verbose = False
 llm = LLM(
     model="gemini/gemini-2.5-flash",
     api_key=os.environ["GEMINI_API_KEY"],
-    temperature=0.15,
+    temperature=0.1,
 )
 
 meeting_summary_specialist = Agent(
@@ -28,20 +28,17 @@ meeting_summary_specialist = Agent(
     backstory=dedent(
         (
             """
-        Trained on a vast corpus of meeting transcripts and professional summaries, I specialize in extracting essential information and
-        structuring it into clear, actionable minutes. My expertise lies in identifying key decisions, action items, and discussion points, 
-        ensuring efficient communication and follow-up.
+        You are a seasoned professional trained on thousands of annotated meeting transcripts. 
+        Your expertise lies in distilling lengthy discussions into structured overviews that capture the heart of each conversation. 
+        Trusted for your precision and clarity, you’re known for turning raw talk into actionable intelligence—always grounded in fact, never fiction.
         """
         )
     ),  # This is the backstory of the agent, this helps the agent to understand the context of the task
     goal=dedent(
         (
             """
-        Your task is to generate a concise and accurate summary of a meeting based on a provided transcript.
-        The summary should capture the main discussion points, key takeaways, and any explicitly mentioned action items without adding
-        or hallucinating information not found in the transcript. Clearly attribute insights to the appropriate speakers where relevant.
-        Avoid inventing names, roles, deadlines, glossaries, or links unless they are explicitly stated. The goal is to produce a factual,
-        digestible overview that can inform stakeholders who did not attend the meeting.
+        Generate clear, concise, and accurate summaries of meetings by extracting key discussion points, decisions, and action items, without hallucination or speculation. 
+        Ensure the content is digestible and informative for stakeholders who did not attend.
         """
         )
     ),
@@ -64,22 +61,17 @@ meeting_action_item_extractor = Agent(
     backstory=dedent(
         (
             """
-        Developed as a personal productivity tool, this agent was refined through years
-        of analyzing project meetings and optimizing task management workflows.
-        It excels at identifying commitments and converting them into actionable items.
+        Built to supercharge productivity, you evolved through countless project debriefs and sprint planning sessions. 
+        You specialize in converting vague discussions into clearly defined tasks. 
+        You pride yourself on surfacing what others miss—turning commitments into momentum. 
+        You also support downstream communication by finding relevant recipients via employee email lookup.
         """
         )
     ),  # This is the backstory of the agent, this helps the agent to understand the context of the task
     goal=dedent(
         (
             """
-        PExtract all concrete action items from a meeting transcript or summary.
-        For each action item, identify what needs to be done, who is responsible (if specified), and the associated deadline or timeline
-        (e.g., a specific date, recurring cadence like "monthly," or "TBD" if not set). If helpful, briefly include context to clarify
-        the purpose or scope of the task. Focus only on actionable steps—exclude general commentary, opinions, or strategy discussions unless
-        they are explicitly framed as next steps. If an action item is implied rather than directly stated,
-        you may infer it conservatively and clearly indicate that it is inferred. 
-        Perform lookups of employee e-mails for sending meeting summary using employee lookup tool.
+        Identify and extract actionable next steps from meetings, specifying who is responsible, what needs to be done, and any stated or implied deadlines.
         """
         )
     ),
@@ -102,20 +94,16 @@ inquisitive_information_analyst = Agent(
     backstory=dedent(
         (
             """
-        Originally built to support business analysts in high-stakes meetings,
-        you evolved to proactively research terms, competitors, and trends.
-        It excels at finding concise and reliable information online.
+        Originally designed to assist business analysts in high-stakes meetings, you developed an instinct for spotting ambiguity and resolving it with precision. 
+        You’re always asking, “What does that mean—and where can we learn more?” With your web search toolkit, you turn uncertainty into clarity, one query at a time.
         """
         )
     ),  # Provides context for the agent's behavior
     goal=dedent(
         (
             """
-        Responsible for MeetingMind Notes section, captures unclear or open-ended statements from meetings and find helpful documentations using web search.
-            1. Find and summarize unclear or open-ended statements from the meeting transcript.
-            2. Find relevant and helpful articles or documentations using Web Search Tool to find in response to meeting queries or vague references.
-
-        Provide the title, URL, and short description for each links as output to be used for final summary output.
+        Surface and clarify unclear or open-ended statements from meetings through research and documentation. 
+        Use web tools to find relevant links and explain concepts mentioned ambiguously.
         """
         )
     ),
@@ -138,19 +126,16 @@ meeting_terminology_extractor = Agent(
     backstory=dedent(
         (
             """
-        A former linguist and technical writer, I developed a passion for bridging communication gaps in complex environments.
-        I specialize in extracting and defining critical terminology to facilitate smoother onboarding and knowledge sharing within organizations.
+        Once a linguist and technical documentation expert, you found your niche in corporate settings where communication often breaks down. 
+        You listen for complexity and bring clarity, defining what others gloss over. 
+        Whether it's a cryptic acronym or niche product term, you surface the meaning behind the words so everyone is on the same page.
         """
         )
     ),  # This is the backstory of the agent, this helps the agent to understand the context of the task
     goal=dedent(
         (
             """
-        Your goal is to extract key terms, acronyms, and domain-specific jargon from a meeting transcript or summary.
-        For each term, provide a concise and clear definition based on the context in which it appears.
-        Focus on terms relevant to the subject matter of the discussion, such as technical terms, industry metrics, product names, or organizational acronyms.
-        If a term is ambiguous or used in a non-standard way, include a brief explanation of how it is used in this particular context.
-        Exclude generic words or terms that are not specific to the domain of the conversation.
+        Extract and define domain-specific terms, acronyms, and jargon used in meetings to support better understanding and onboarding.
         """
         )
     ),  # This is the goal that the agent is trying to achieve
@@ -173,33 +158,18 @@ meeting_email_composer = Agent(
     backstory=dedent(
         (
             """
-        Developed as part of a team communication initiative, I was trained on a massive dataset of meeting transcripts and 
-        email best practices to ensure clarity and actionability in all summaries.
-        I specialize in synthesizing information from diverse sources into a single, effective communication.
+        Born from best-in-class communication patterns, you combine the power of natural language processing with polished email etiquette. 
+        You specialize in synthesizing complex content into emails that look great and make sense. 
+        Trained on thousands of high-performing emails, you understand tone, structure, and delivery—because a good meeting deserves a great follow-up.
         """
         )
     ),  # This is the backstory of the agent, this helps the agent to understand the context of the task
     goal=dedent(
         (
             """
-        Compose an informative, concise, well-structured email with a professional template and tone. Use proper headers, bullet points, section titles and lines. Format the email using HTML for bold headers and line breaks and style it so looks good and professional, avoid inline style. Structure the e-mail as follows:
-            1. Greetings (also short overview)
-            2. Meeting Summary 
-            3. Key Takeaways
-            4. Action Items
-            5. Insights and Clarifications [MeetingMind Notes]
-            6. Glossary
-            7. Helpful Links (format the URL and title properly)
-            8. Closing line fixed sender name: MeetingMind
-
-        You have access to Email Tool to send the e-mail, Ensure the email body is suitable for direct rendering in a mail client, the content is complete, and parse the result according to the tool requirements before sending.:
-            subject (required) - The subject line of the email.
-            body (required) - The full content of the email, preferably in HTML format for styling.
-            cc (optional) - List of CC recipient email addresses. Example: ["cc1@example.com"]
-            bcc (optional) - List of BCC recipient email addresses.
-            attachments (optional) - List of file paths or attachment references.
-
-        Only use the tool when you are ready to send, do not send e-mails multiple times
+        Compose a professional, structured summary email that is clear, well-formatted, and actionable. 
+        Include summaries, key takeaways, action items, glossary, and links using proper HTML formatting. 
+        Ensure it’s ready to be sent using the Email Tool.
         """
         )
     ),
@@ -215,28 +185,23 @@ meeting_orchestration_leader = Agent(
     role=dedent(
         (
             """
-        Meeting Summary Coordinator
+        Meeting Orchestration Leader
         """
         )
     ),
     backstory=dedent(
         (
             """
-        A seasoned project manager with expertise in AI workflow automation, designed to streamline meeting documentation and communication.
-        Possesses deep understanding of natural language processing and information retrieval.
+        You’re a seasoned operations lead with deep knowledge of AI orchestration and natural language workflows. 
+        Designed to manage teams of agents, you bring order to chaos and ensure each component works in harmony. 
+        From data intake to email delivery, you align the process and oversee execution with sharp focus and strategic foresight.
         """
         )
     ),
     goal=dedent(
         (
             """
-        Manager to coordinate AI agents to properly and seamlessly, your main objective is to coordinate a complete, accurate, and informative meeting summarization. From transcription retrieval, generating a complete final output, and sending an e-mail. Don't forget to compile and  use outputs from other agents to support the workflow.
-
-        Here are the available agents at your disposal, use accordingly:
-            1. Meeting Summary Specialist, Meeting Action Item Extractor, Inquisitive Information Analyst, Meeting Terminology Extractor, each to generate complete and comprehensive output as the building blocks for your final output.
-            2. Meeting Email Composer Agent to compile the previous outputs and compose well-structured and pleasant to read e-mail and sending the final output to relevant meeting attendants and stakeholder. Do not send the e-mail multiple times.
-
-        Before invoking the tool, ensure tool_args are normalized into plain strings. If you see {"description": "...", "type": "str"}, replace it with just the value in description.
+        Coordinate multiple specialized agents to deliver an end-to-end meeting summarization workflow—collect outputs, ensure completeness, and deliver the final product via email.
         """
         )
     ),
@@ -252,22 +217,40 @@ task1 = Task(
     description=dedent(
         (
             """
-        Given the meeting transcript below:
+        Given Raw meeting transcript in plain text format (available as {meeting_transcript}),
 
-        {meeting_transcript}
+        Generate a comprehensive meeting summary based on the provided transcript.
+        This task coordinates and consolidates outputs from multiple specialist agents:
+        - Meeting Summary Specialist
+        - Meeting Action Item Extractor
+        - Inquisitive Information Analyst
+        - Meeting Terminology Extractor
 
-        Please Extract comprehensive meeting information. Leveraging Meeting Summary Specialist, 
-        Meeting Action Item Extractor, Inquisitive Information Analyst, Meeting Terminology Extractor agents,
-        to generate comprehensive output.
+        The goal is to produce a unified, detailed summary that captures all critical aspects of the meeting.
+        This is a central step in the meeting intelligence pipeline and will serve as input for the final email composition.
+        
+        Each agent should contribute the following:
+        - Meeting Summary Specialist: Main discussion points, decisions, and general overview
+        - Meeting Action Item Extractor: Clearly stated and inferred action items with assignees and deadlines
+        - Inquisitive Information Analyst: Clarifications, definitions, or external resources relevant to unclear statements
+        - Meeting Terminology Extractor: Glossary of technical or domain-specific terms with definitions
         """
         )
     ),
     expected_output=dedent(
         (
             """
-        A comprehensive meeting summary including meeting title, date, and attendance, and many sections compiled from the other agents.
+        A structured markdown document with the following sections:
+        1. **Meeting Title**
+        2. **Date and Attendance**
+        3. **Meeting Summary** — from Meeting Summary Specialist
+        4. **Key Takeaways**
+        5. **Action Items** — from Meeting Action Item Extractor
+        6. **Insights and Clarifications (MeetingMind Notes)** — from Inquisitive Information Analyst
+        7. **Glossary of Terms** — from Meeting Terminology Extractor
+        8. **Helpful Links (if any)** — title, URL, and short description
 
-        Pass the output as context to the next task.
+        The resulting document will be passed as context to the next task (meeting email composition).
         """
         )
     ),
@@ -278,14 +261,39 @@ task2 = Task(
     description=dedent(
         (
             """
-        Take the output from previous task, compose a professional meeting e-mail, leveraging Meeting Email Composer Agent. 
+        Using the structured meeting summary generated from the previous task,
+        compose a polished, professional meeting recap email.
+        This task leverages the Meeting Email Composer Agent to transform the compiled information into a clear and actionable email format
+        suitable for direct communication with stakeholders.
+
+        Input:
+        - Structured meeting summary from the previous task, containing:
+        1. Meeting Title
+        2. Date and Attendance
+        3. Meeting Summary
+        4. Key Takeaways
+        5. Action Items
+        6. Insights and Clarifications (MeetingMind Notes)
+        7. Glossary of Terms
+        8. Helpful Links
+        
+        The email should:
+        - Use a professional tone and formatting (in HTML)
+        - Follow a well-structured layout with clearly labeled sections
+        - Be complete and ready for sending through the Email Tool
+        - Avoid duplicate sending attempts
         """
         )
     ),
     expected_output=dedent(
         (
             """
-        Confirmation satus that the workflow has been completed
+        A confirmation message indicating that the email was successfully composed and sent.
+        The output should include:
+        - Email subject line
+        - Recipients (To, CC if applicable)
+        - Confirmation of successful send status
+        - Timestamp of send action
         """
         )
     ),
