@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from crewai import Crew
 
 from crew_agents.agents_and_task import (
@@ -10,16 +12,17 @@ from crew_agents.agents_and_task import (
     task1,
     task2,
 )
-from scripts.utils import transcribe_gcs_video_with_cache
+from scripts.utils_aws import transcribe_s3_video_with_cache
 
 
-def transcript_to_text(gcs_video_uri) -> str:
-    full_transcript, _ = transcribe_gcs_video_with_cache(
-        gcs_video_uri=gcs_video_uri,
-        google_credentials_path="secrets/secret.json",
+def transcript_to_text(s3_video_uri) -> Tuple[str, bool]:
+    full_transcript, _, is_cached= transcribe_s3_video_with_cache(
+        s3_video_uri=s3_video_uri,
+        region_name="us-west-2",
+        sample_rate_hz=16000,
     )
 
-    return full_transcript
+    return full_transcript, is_cached
 
 
 def crew_launch(meeting_transcript: str):

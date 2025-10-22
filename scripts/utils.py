@@ -43,7 +43,7 @@ def transcribe_gcs_video_with_cache(
     language_code: str = "en-US",
     encoding: str = "LINEAR16",
     model: str = "video",
-) -> Tuple[str, List[str]]:
+) -> Tuple[str, List[str], bool]:
     """
     Checks if a transcription exists for a GCS video.
     If not, transcribes the video and caches the result as a .txt file in GCS.
@@ -65,11 +65,8 @@ def transcribe_gcs_video_with_cache(
     transcript_blob = bucket.blob(transcript_blob_path)
 
     if transcript_blob.exists():
-        print(
-            f"✅ Found cached transcription: gs://{bucket_name}/{transcript_blob_path}"
-        )
         transcript = transcript_blob.download_as_text()
-        return transcript, transcript.split(". ")
+        return transcript, transcript.split(". "), True
 
     # Download video to temp
     print("⬇️ Downloading video...")
@@ -104,4 +101,4 @@ def transcribe_gcs_video_with_cache(
     print("💾 Uploading transcript to GCS...")
     transcript_blob.upload_from_string(full_transcript)
 
-    return full_transcript, transcripts
+    return full_transcript, transcripts, False

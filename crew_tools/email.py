@@ -52,6 +52,7 @@ class SendEmailTool(BaseTool):
     fixed_recipients: List[str] = [
         "erwinsyah.hartono@gmail.com",
         "kevindjo27@gmail.com",
+        "pertiwibektiutami@gmail.com"
     ]
 
     def _run(

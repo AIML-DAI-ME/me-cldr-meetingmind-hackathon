@@ -3,7 +3,6 @@ from textwrap import dedent
 
 import litellm
 from crewai import LLM, Agent, Task
-
 from crew_tools.email import email_tool
 from crew_tools.employee import employee_tool
 from crew_tools.web_search import search_tool
@@ -12,10 +11,11 @@ litellm.set_verbose = False
 
 
 llm = LLM(
-    model="gemini/gemini-2.5-flash",
+    model="gemini/gemini-2.0-flash",
     api_key=os.environ["GEMINI_API_KEY"],
     temperature=0.1,
 )
+
 
 meeting_summary_specialist = Agent(
     role=dedent(
